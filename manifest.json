@@ -1,7 +1,7 @@
 {
-  "name": "RecipeBox - Мої Рецепти",
-  "short_name": "RecipeBox",
-  "description": "Смачні рецепти для твого дня",
+  "name": "RezeptID",
+  "short_name": "ReciptID",
+  "description": "Lekere Rezepte für deinen Tag",
   "start_url": "https://ktototam533.github.io/RID/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -9,23 +9,16 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%232ecc71' width='192' height='192'/><text x='96' y='140' font-size='120' text-anchor='middle' fill='white'>🍳</text></svg>",
+      "src": "chef.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%232ecc71' width='512' height='512'/><text x='256' y='370' font-size='300' text-anchor='middle' fill='white'>🍳</text></svg>",
+      "src": "chef.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "https://via.placeholder.com/540x720?text=RecipeBox",
-      "sizes": "540x720",
-      "type": "image/png"
     }
   ]
 }
