@@ -434,6 +434,21 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Реєстрація Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/rezeptid/sw.js')
+                .then(reg => {
+                    console.log('✅ Service Worker зареєстрований:', reg);
+                })
+                .catch(err => {
+                    console.log('❌ Service Worker помилка:', err);
+                });
+        }
+    </script>
+
     <script>
         // Filter Funktion
         document.querySelectorAll('.filter-btn').forEach(button => {
