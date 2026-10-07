@@ -2,7 +2,7 @@
   "name": "RezeptID",
   "short_name": "ReciptID",
   "description": "Lekere Rezepte für deinen Tag",
-  "start_url": "https://ktototam533.github.io/RID/",
+  "start_url": "/RID/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2ecc71",

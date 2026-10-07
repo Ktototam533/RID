@@ -1,8 +1,8 @@
 // Назва кешу
 const CACHE_NAME = 'recipeBox-v1';
 const urlsToCache = [
-  '/rezeptid/',
-  '/rezeptid/index.html',
+  '/RID/',
+  '/RID/index.html',
   '/rezeptid/manifest.json'
 ];
 
