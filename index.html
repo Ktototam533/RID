@@ -260,6 +260,11 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
+                <li class="nav-item">
+    <a class="nav-link" href="#" id="accountBtn">
+        <i class="fas fa-user"></i> Konto
+    </a>
+</li>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="index.html">Startseite</a></li>
                     <li class="nav-item"><a class="nav-link" href="rezepte.html">Rezepte</a></li>
@@ -269,6 +274,31 @@
             </div>
         </div>
     </nav>
+
+    <!-- Modal -->
+<div class="modal fade" id="accountModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Mein Konto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label class="form-label">E-Mail</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Passwort</label>
+                        <input type="password" class="form-control" id="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Anmelden</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -436,6 +466,45 @@
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     
+    <script>// Account Modal öffnen
+document.getElementById('accountBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    const modal = new bootstrap.Modal(document.getElementById('accountModal'));
+    modal.show();
+});
+
+// Login-Formular
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    // ⚠️ WICHTIG: Passwort NIEMALS an Frontend speichern!
+    // Stattdessen an Backend senden:
+    
+    try {
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (data.token) {
+            // Token speichern (httpOnly Cookie ist sicherer, aber localStorage möglich)
+            localStorage.setItem('authToken', data.token);
+            localStorage.setItem('userEmail', email);
+            
+            alert('Erfolgreich angemeldet!');
+            document.getElementById('loginForm').reset();
+        }
+    } catch (error) {
+        alert('Anmeldung fehlgeschlagen');
+        console.error(error);
+    }
+});</script>
     <!-- Реєстрація Service Worker -->
     <script>
         if ('serviceWorker' in navigator) {
