@@ -350,34 +350,41 @@
     <script>
         // Artikel laden
         function loadItems() {
-            const items = JSON.parse(localStorage.getItem('shoppingList') || '[]');
-            const list = document.getElementById('shoppingList');
-            const emptyMessage = document.getElementById('emptyMessage');
+             const items = JSON.parse(localStorage.getItem('shoppingList') || '[]');
+    const list = document.getElementById('shoppingList');
 
-            if (items.length === 0) {
-                list.innerHTML = '<div id="emptyMessage" class="empty-message"><i class="fas fa-shopping-basket"></i><p>Deine Einkaufsliste ist leer</p></div>';
-                updateStats();
-                return;
-            }
+    // Leere Liste anzeigen
+    if (items.length === 0) {
+        list.innerHTML = `
+            <div class="empty-message">
+                <i class="fas fa-shopping-basket"></i>
+                <p>Deine Einkaufsliste ist leer</p>
+                <p style="font-size: 0.9rem; margin-top: 10px;">Füge Artikel hinzu um zu beginnen</p>
+            </div>
+        `;
+        updateStats();
+        return;
+    }
 
-            emptyMessage.style.display = 'none';
-            list.innerHTML = '';
+    // Liste komplett neu rendern
+    list.innerHTML = '';
 
-            items.forEach((item, index) => {
-                const html = `
-                    <div class="list-item ${item.completed ? 'completed' : ''}">
-                        <input type="checkbox" ${item.completed ? 'checked' : ''} onchange="toggleItem(${index})">
-                        <span>${item.name}</span>
-                        <button onclick="deleteItem(${index})">
-                            <i class="fas fa-trash"></i> Löschen
-                        </button>
-                    </div>
-                `;
-                list.innerHTML += html;
-            });
+    items.forEach((item, index) => {
+        const html = `
+            <div class="list-item ${item.completed ? 'completed' : ''}">
+                <input type="checkbox" ${item.completed ? 'checked' : ''} onchange="toggleItem(${index})">
+                <span>${item.name}</span>
+                <button onclick="deleteItem(${index})">
+                    <i class="fas fa-trash"></i> Löschen
+                </button>
+            </div>
+        `;
+        list.innerHTML += html;
+    });
 
-            updateStats();
-        }
+    updateStats();
+}
+        
 
         // Artikel hinzufügen
         function addItem() {
