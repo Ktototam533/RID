@@ -6,18 +6,16 @@ require('dotenv').config();
 
 const app = express();
 
-// ⭐ MIDDLEWARE
 app.use(cors({
-    origin: '*', // Erlaubt alle Origins (nur für Development!)
+    origin: '*',
     credentials: true
 }));
 app.use(express.json());
 
-// Pseudo-Datenbank
 const users = [];
-const JWT_SECRET = 'your-secret-key-123';
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
-// ⭐ TEST-Route
+// ⭐ TEST ROUTE
 app.get('/api/test', (req, res) => {
     res.json({ message: '✅ Backend läuft!' });
 });
@@ -45,13 +43,13 @@ app.post('/api/register', async (req, res) => {
         };
         users.push(user);
         
-        console.log('✅ Neuer Benutzer registriert:', email);
+        console.log('✅ Neuer Benutzer:', email);
         res.json({ 
             message: 'Registrierung erfolgreich',
             user: { id: user.id, name, email }
         });
     } catch (error) {
-        console.error('❌ Registrierungs-Fehler:', error);
+        console.error('❌ Fehler:', error);
         res.status(500).json({ message: 'Fehler: ' + error.message });
     }
 });
@@ -60,8 +58,6 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        
-        console.log('🔍 Login-Versuch:', email);
         
         const user = users.find(u => u.email === email);
         if (!user) {
@@ -87,12 +83,31 @@ app.post('/api/login', async (req, res) => {
             email: user.email
         });
     } catch (error) {
-        console.error('❌ Login-Fehler:', error);
+        console.error('❌ Fehler:', error);
         res.status(500).json({ message: 'Fehler: ' + error.message });
     }
 });
 
-const PORT = 5000;
+// PROFIL (geschützte Route)
+app.get('/api/profile', (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    
+    if (!token) {
+        return res.status(401).json({ message: 'Token erforderlich' });
+    }
+    
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const user = users.find(u => u.id === decoded.id);
+        
+        res.json({ user: { id: user.id, name: user.name, email: user.email } });
+    } catch (error) {
+        res.status(401).json({ message: 'Ungültiger Token' });
+    }
+});
+
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`✅ Server läuft auf http://localhost:${PORT}`);
+    console.log(`🔗 Backend-URL: http://localhost:${PORT}/api`);
 });
