@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    `<meta charset="UTF-8">`
+    `<meta name="viewport" content="width=device-width, initial-scale=1.0">`
     <title>RezeptID</title>
 
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="chef.png" type="image/png">
-    <link rel="android-touch-icon" href="chef.png">
+    <!-- PWA -->
+    `<link rel="manifest" href="manifest.json">`
+    `<link rel="icon" href="chef.png" type="image/png">`
+    `<link rel="android-touch-icon" href="chef.png">`
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap -->
+    `<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">`
+
+    <!-- Icons -->
+    `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">`
     
-    <style>
+    `<style>`
+
         * {
+
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -24,6 +31,7 @@
             background-color: #f8f9fa;
         }
 
+        /* Navigation */
         nav {
             background-color: #fff;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -44,6 +52,7 @@
             color: #2ebe6a !important;
         }
 
+        /* Hero Section */
         .hero {
             background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
             color: white;
@@ -76,6 +85,7 @@
             color: #2ecc71;
         }
 
+        /* Rezept-Karten */
         .recipe-card {
             background: white;
             border-radius: 10px;
@@ -162,6 +172,7 @@
             color: white;
         }
 
+        /* Sektion */
         .section-title {
             font-size: 2rem;
             font-weight: bold;
@@ -174,6 +185,7 @@
             padding: 60px 20px;
         }
 
+        /* Filter */
         .filter-buttons {
             display: flex;
             justify-content: center;
@@ -203,6 +215,7 @@
             color: white;
         }
 
+        /* Footer */
         footer {
             background-color: #2c3e50;
             color: white;
@@ -210,25 +223,25 @@
             text-align: center;
         }
 
+        footer p {
+            margin: 0;
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 2rem;
             }
+
             .hero p {
                 font-size: 1rem;
             }
+
             .section-title {
                 font-size: 1.5rem;
             }
         }
-
-        .alert-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-        }
-    </style>
+    `</style>`
 </head>
 
 <body>
@@ -247,75 +260,10 @@
                     <li class="nav-item"><a class="nav-link" href="rezepte.html">Rezepte</a></li>
                     <li class="nav-item"><a class="nav-link" href="favoriten.html">Favoriten</a></li>
                     <li class="nav-item"><a class="nav-link" href="einkaufsliste.html">Einkaufsliste</a></li>
-                    <!-- ✅ KONTO-BUTTON RICHTIG PLATZIERT -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" id="accountBtn">
-                            <i class="fas fa-user"></i> Konto
-                        </a>
-                    </li>
                 </ul>
             </div>
         </div>
     </nav>
-
-    <!-- ✅ NUR EINE MODAL - ENTFERNT DOPPELTE -->
-    <div class="modal fade" id="authModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="authTitle">Anmelden</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Login Form -->
-                    <form id="loginForm">
-                        <div class="mb-3">
-                            <label class="form-label">E-Mail</label>
-                            <input type="email" class="form-control" id="loginEmail" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Passwort</label>
-                            <input type="password" class="form-control" id="loginPassword" required>
-                        </div>
-                        <button type="submit" class="btn btn-success w-100">Anmelden</button>
-                        <p class="mt-3 text-center">
-                            Noch kein Konto? 
-                            <a href="#" id="switchToRegister">Hier registrieren</a>
-                        </p>
-                    </form>
-
-                    <!-- Registrierungs Form -->
-                    <form id="registerForm" style="display: none;">
-                        <div class="mb-3">
-                            <label class="form-label">Name</label>
-                            <input type="text" class="form-control" id="registerName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">E-Mail</label>
-                            <input type="email" class="form-control" id="registerEmail" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Passwort</label>
-                            <input type="password" class="form-control" id="registerPassword" required minlength="8">
-                            <small class="text-muted">Mindestens 8 Zeichen</small>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Passwort wiederholen</label>
-                            <input type="password" class="form-control" id="registerPasswordConfirm" required>
-                        </div>
-                        <button type="submit" class="btn btn-success w-100">Registrieren</button>
-                        <p class="mt-3 text-center">
-                            Bereits registriert? 
-                            <a href="#" id="switchToLogin">Hier anmelden</a>
-                        </p>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Alert Container -->
-    <div class="alert-container" id="alertContainer"></div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -331,6 +279,7 @@
         <div class="container">
             <h2 class="section-title">Beliebte Rezepte</h2>
 
+            <!-- Filter -->
             <div class="filter-buttons">
                 <button class="filter-btn active" data-filter="all">Alle</button>
                 <button class="filter-btn" data-filter="vegetarisch">Vegetarisch</button>
@@ -338,6 +287,7 @@
                 <button class="filter-btn" data-filter="gesund">Gesund</button>
             </div>
 
+            <!-- Rezept-Karten -->
             <div class="row g-4" id="recipeContainer">
                 <!-- Rezept 1 -->
                 <div class="col-md-6 col-lg-4 recipe-item" data-category="vegetarisch">
@@ -352,7 +302,7 @@
                             <p class="recipe-description">Eine leichte und frische Pasta mit saisonalem Gemüse.</p>
                             <div class="recipe-buttons">
                                 <button class="btn-view">Ansehen</button>
-                                <button class="btn-favorite" onclick="toggleFavorite(event)">
+                                `<button class="btn-favorite" onclick="toggleFavorite(event)">`
                                     <i class="fas fa-heart"></i>
                                 </button>
                             </div>
@@ -373,7 +323,7 @@
                             <p class="recipe-description">Klassischer Salat mit knusprigen Croutons.</p>
                             <div class="recipe-buttons">
                                 <button class="btn-view">Ansehen</button>
-                                <button class="btn-favorite" onclick="toggleFavorite(event)">
+                                `<button class="btn-favorite" onclick="toggleFavorite(event)">`
                                     <i class="fas fa-heart"></i>
                                 </button>
                             </div>
@@ -394,7 +344,7 @@
                             <p class="recipe-description">Nährstoffreich und lecker.</p>
                             <div class="recipe-buttons">
                                 <button class="btn-view">Ansehen</button>
-                                <button class="btn-favorite" onclick="toggleFavorite(event)">
+                                `<button class="btn-favorite" onclick="toggleFavorite(event)">`
                                     <i class="fas fa-heart"></i>
                                 </button>
                             </div>
@@ -414,80 +364,3 @@
                             </div>
                             <p class="recipe-description">Schnelles und gesundes asiatisches Gericht.</p>
                             <div class="recipe-buttons">
-                                <button class="btn-view">Ansehen</button>
-                                <button class="btn-favorite" onclick="toggleFavorite(event)">
-                                    <i class="fas fa-heart"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Rezept 5 -->
-                <div class="col-md-6 col-lg-4 recipe-item" data-category="schnell">
-                    <div class="recipe-card">
-                        <img src="https://th.bing.com/th/id/OIP.Qz3AD1iwAclRIOmnW-ChgwHaJQ?w=208&h=260&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" alt="Hummus Toast" class="recipe-image">
-                        <div class="recipe-body">
-                            <h3 class="recipe-title">Hummus Toast</h3>
-                            <div class="recipe-info">
-                                <span><i class="fas fa-clock"></i> 10 Min</span>
-                                <span><i class="fas fa-users"></i> 2 Portionen</span>
-                            </div>
-                            <p class="recipe-description">Schnelle und gesunde Snack-Idee.</p>
-                            <div class="recipe-buttons">
-                                <button class="btn-view">Ansehen</button>
-                                <button class="btn-favorite" onclick="toggleFavorite(event)">
-                                    <i class="fas fa-heart"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Rezept 6 -->
-                <div class="col-md-6 col-lg-4 recipe-item" data-category="gesund">
-                    <div class="recipe-card">
-                        <img src="https://th.bing.com/th/id/OIP.l04B894PvjptloA7zq8DjwHaE3?w=297&h=195&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" alt="Grüner Smoothie" class="recipe-image">
-                        <div class="recipe-body">
-                            <h3 class="recipe-title">Grüner Smoothie</h3>
-                            <div class="recipe-info">
-                                <span><i class="fas fa-clock"></i> 5 Min</span>
-                                <span><i class="fas fa-users"></i> 1 Portion</span>
-                            </div>
-                            <p class="recipe-description">Energiespendendes Getränk.</p>
-                            <div class="recipe-buttons">
-                                <button class="btn-view">Ansehen</button>
-                                <button class="btn-favorite" onclick="toggleFavorite(event)">
-                                    <i class="fas fa-heart"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 RezeptID - Alle Rechte vorbehalten</p>
-        </div>
-    </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Service Worker -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/rezeptid/sw.js')
-                .then(reg => console.log('✅ Service Worker registriert'))
-                .catch(err => console.log('❌ Service Worker Fehler:', err));
-        }
-    </script>
-
-    <!-- Main Script -->
-    <script src="app.js"></script>
-</body>
-</html>
