@@ -471,15 +471,40 @@
         });
  
         // Favoriten Funktion
-        function toggleFavorite(button) {
-            button.classList.toggle('active');
-           
-            if (button.classList.contains('active')) {
-                button.innerHTML = '<i class="fas fa-heart"></i>';
-            } else {
-                button.innerHTML = '<i class="fas fa-heart"></i>';
+          
+document.querySelectorAll('.btn-favorite').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        this.classList.toggle('active');
+        
+        // Ermittle welches Rezept
+        const recipeTitle = this.closest('.recipe-card').querySelector('.recipe-title').textContent;
+        const recipeId = recipes.findIndex(r => r.title === recipeTitle) + 1;
+        
+        // Speichere in LocalStorage
+        let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+        
+        if (this.classList.contains('active')) {
+            if (!favorites.includes(recipeId)) {
+                favorites.push(recipeId);
             }
+        } else {
+            favorites = favorites.filter(id => id !== recipeId);
         }
+        
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+    });
+});
+
+// Rezepte Datenbank
+const recipes = [
+    { title: 'Pasta Primavera' },
+    { title: 'Caesar Salad' },
+    { title: 'Buddha Bowl' },
+    { title: 'Gemüse Stir Fry' },
+    { title: 'Hummus Toast' },
+    { title: 'Grüner Smoothie' }
+];
  
         // CTA Button
         document.querySelector('.btn-cta').addEventListener('click', function() {
