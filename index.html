@@ -324,7 +324,7 @@
                             <p class="recipe-description">Klassischer Salat mit knusprigen Croutons.</p>
                             <div class="recipe-buttons">
                                 <button class="btn-view">Ansehen</button>
-                                <button class="btn-favorite" onclick="toggleFavorite(event)">
+                                <button class="btn-favorite">
                                     <i class="fas fa-heart"></i>
                                 </button>
                             </div>
@@ -345,7 +345,7 @@
                             <p class="recipe-description">Nährstoffreich und lecker.</p>
                             <div class="recipe-buttons">
                                 <button class="btn-view">Ansehen</button>
-                                <button class="btn-favorite" onclick="toggleFavorite(event)">
+                                <button class="btn-favorite">
                                     <i class="fas fa-heart"></i>
                                 </button>
                             </div>
@@ -366,7 +366,7 @@
                             <p class="recipe-description">Schnelles und gesundes asiatisches Gericht mit knackigem Gemüse.</p>
                             <div class="recipe-buttons">
                                 <button class="btn-view">Ansehen</button>
-                                <button class="btn-favorite" onclick="toggleFavorite(event)">
+                                <button class="btn-favorite">
                                     <i class="fas fa-heart"></i>
                                 </button>
                             </div>
@@ -387,7 +387,7 @@
                             <p class="recipe-description">Schnelle und gesunde Snack-Idee mit Hummus und frischem Gemüse.</p>
                             <div class="recipe-buttons">
                                 <button class="btn-view">Ansehen</button>
-                                <button class="btn-favorite" onclick="toggleFavorite(event)">
+                                <button class="btn-favorite">
                                     <i class="fas fa-heart"></i>
                                 </button>
                             </div>
@@ -408,7 +408,7 @@
                             <p class="recipe-description">Energiespendendes Getränk mit Spinat, Banane und Mandelmilch.</p>
                             <div class="recipe-buttons">
                                 <button class="btn-view">Ansehen</button>
-                                <button class="btn-favorite" onclick="toggleFavorite(event)">
+                                <button class="btn-favorite">
                                     <i class="fas fa-heart"></i>
                                 </button>
                             </div>
@@ -419,6 +419,31 @@
         </div>
     </section>
 
+    <div class="modal fade" id="recipeModal" tabindex="-1" aria-labelledby="recipeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title fs-5" id="recipeModalLabel"></h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <i class="fas fa-clock"></i>
+                    <span id="recipeTime"></span>
+                    &nbsp;|&nbsp;
+                    <i class="fas fa-users"></i>
+                    <span id="recipeServings"></span>
+                </p>
+
+                <h3 class="fs-6 mt-4">Zutaten</h3>
+                <ul id="recipeIngredients"></ul>
+
+                <h3 class="fs-6 mt-4">Zubereitung</h3>
+                <ol id="recipeSteps"></ol>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Footer -->
     <footer>
         <div class="container">
