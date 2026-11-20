@@ -146,6 +146,8 @@ Gib realistische Zutatenmengen und Zubereitungsschritte an.`,
 
 });
  
+console.log("Gemini API key configured:", Boolean(process.env.GEMINI_API_KEY?.trim()));
+
 app.listen(port, () => {
 
     console.log(`Server läuft auf Port ${port}`);
