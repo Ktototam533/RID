@@ -6,10 +6,12 @@ import cors from "cors";
 
 import rateLimit from "express-rate-limit";
 
-import OpenAI from "openai";
+import { GoogleGenAI, Type } from "@google/genai";
  
 const app = express();
 
+app.set("trust proxy", 1);
+ 
 const port = process.env.PORT || 3000;
  
 const allowedOrigins = (process.env.FRONTEND_ORIGIN || "")
@@ -19,6 +21,12 @@ const allowedOrigins = (process.env.FRONTEND_ORIGIN || "")
     .map(origin => origin.trim())
 
     .filter(Boolean);
+ 
+const ai = new GoogleGenAI({
+
+    apiKey: process.env.GEMINI_API_KEY
+
+});
  
 app.use(cors({
 
@@ -56,65 +64,83 @@ app.post("/api/recipe", async (req, res) => {
  
     if (!title || title.length > 100) {
 
-        return res.status(400).json({ error: "Вкажіть назву страви до 100 символів." });
+        return res.status(400).json({
+
+            error: "Вкажіть назву страви до 100 символів."
+
+        });
 
     }
  
     try {
 
-        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
- 
-        const response = await openai.responses.create({
+        const response = await ai.models.generateContent({
 
-            model: "gpt-4.1-mini",
+            model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
 
-            input: [
+            contents: `Erstelle ein einfaches, verständliches Rezept auf Deutsch für: ${title}.
 
-                {
+Gib realistische Zutatenmengen und Zubereitungsschritte an.`,
 
-                    role: "system",
+            config: {
 
-                    content: `Du erstellst einfache Kochrezepte auf Deutsch.
+                responseMimeType: "application/json",
 
-Antworte ausschließlich mit gültigem JSON, ohne Markdown.
+                responseSchema: {
 
-Verwende genau diese Struktur:
+                    type: Type.OBJECT,
 
-{
+                    properties: {
 
-  "time": "z. B. 20 Min",
+                        time: { type: Type.STRING },
 
-  "servings": "z. B. 2 Portionen",
+                        servings: { type: Type.STRING },
 
-  "ingredients": ["Zutat 1", "Zutat 2"],
+                        ingredients: {
 
-  "steps": ["Schritt 1", "Schritt 2"]
+                            type: Type.ARRAY,
 
-}`
+                            items: { type: Type.STRING }
 
-                },
+                        },
 
-                {
+                        steps: {
 
-                    role: "user",
+                            type: Type.ARRAY,
 
-                    content: `Erstelle ein verständliches Rezept für: ${title}`
+                            items: { type: Type.STRING }
+
+                        }
+
+                    },
+
+                    required: ["time", "servings", "ingredients", "steps"]
 
                 }
 
-            ]
+            }
 
         });
  
-        const recipe = JSON.parse(response.output_text);
+        if (!response.text) {
 
+            throw new Error("Gemini повернув порожню відповідь.");
+
+        }
+ 
+        const recipe = JSON.parse(response.text);
+ 
         res.json(recipe);
 
     } catch (error) {
 
-        console.error("Rezept-Fehler:", error.message);
+        console.error("Gemini recipe error:", error.message);
 
-        res.status(500).json({ error: "Das Rezept konnte nicht erstellt werden." });
+        res.status(500).json({
+
+            error: "Das Rezept konnte gerade nicht erstellt werden."
+
+        });
 
     }
 
