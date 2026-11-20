@@ -240,6 +240,19 @@
         <div class="container">
             <h2 class="section-title">Rezeptübersicht</h2>
 
+            <div class="mx-auto mb-4" style="max-width: 550px;">
+<label for="recipeSearch" class="form-label">Rezepte suchen</label>
+<input
+        type="search"
+        id="recipeSearch"
+        class="form-control"
+        placeholder="Zum Beispiel: Pasta"
+>
+<p id="searchNoResults" class="text-center mt-3" style="display: none;">
+        Keine Treffer gefunden.
+</p>
+</div>
+
             <!-- Filter -->
             <div class="filter-buttons">
                 <button class="filter-btn active" data-filter="all">Alle</button>
@@ -379,6 +392,29 @@
         </div>
     </section>
 
+
+    <section class="section">
+<div class="container">
+<h2 class="section-title">Rezepte aus meinen Zutaten</h2>
+<p>Gib Zutaten ein, die du zu Hause hast — zum Beispiel Eier, Milch und Mehl.</p>
+ 
+        <label for="ingredientInput" class="form-label">Deine Zutaten</label>
+<textarea
+            id="ingredientInput"
+            class="form-control mb-3"
+            rows="3"
+            placeholder="Eier, Milch, Mehl"
+></textarea>
+ 
+        <button type="button" id="findIngredientRecipes" class="btn btn-success">
+            Rezepte finden
+</button>
+ 
+        <p id="ingredientStatus" class="mt-3" aria-live="polite"></p>
+<div id="ingredientRecipeResults" class="row g-4 mt-2"></div>
+</div>
+</section>
+
     <!-- Footer -->
     <footer>
         <div class="container">
@@ -391,32 +427,155 @@
 
     <!-- Main Script -->
     <script>
-        // Filter Funktion
-        document.querySelectorAll('.filter-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-
-                const category = this.dataset.filter;
-                const recipes = document.querySelectorAll('.recipe-item');
-
-                recipes.forEach(recipe => {
-                    if (category === 'all' || recipe.dataset.category === category) {
-                        recipe.style.display = 'block';
-                    } else {
-                        recipe.style.display = 'none';
-                    }
+        // Suche und Kategorie-Filter
+    const searchInput = document.getElementById("recipeSearch");
+    const noResults = document.getElementById("searchNoResults");
+    let activeCategory = "all";
+ 
+    function filterRecipes() {
+        const query = searchInput.value.trim().toLocaleLowerCase("de");
+        let visibleCount = 0;
+ 
+        document.querySelectorAll(".recipe-item").forEach(item => {
+            const categoryMatches =
+                activeCategory === "all" ||
+                item.dataset.category === activeCategory;
+ 
+            const searchMatches =
+                item.textContent.toLocaleLowerCase("de").includes(query);
+ 
+            const visible = categoryMatches && searchMatches;
+            item.style.display = visible ? "" : "none";
+ 
+            if (visible) visibleCount++;
+        });
+ 
+        noResults.style.display = visibleCount === 0 ? "block" : "none";
+    }
+ 
+    searchInput.addEventListener("input", filterRecipes);
+ 
+    document.querySelectorAll(".filter-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            document.querySelectorAll(".filter-btn")
+                .forEach(btn => btn.classList.remove("active"));
+ 
+            this.classList.add("active");
+            activeCategory = this.dataset.filter;
+            filterRecipes();
+        });
+    });
+ 
+    // Favoriten-Schaltflächen
+    document.querySelectorAll(".btn-favorite").forEach(button => {
+        button.addEventListener("click", function () {
+            this.classList.toggle("active");
+        });
+    });
+ 
+    // Gemini: Rezepte aus eingegebenen Zutaten
+    document.getElementById("findIngredientRecipes").addEventListener("click", async function () {
+        const ingredients = document.getElementById("ingredientInput").value
+            .split(/[,;\n]+/)
+            .map(item => item.trim())
+            .filter(Boolean);
+ 
+        const status = document.getElementById("ingredientStatus");
+        const results = document.getElementById("ingredientRecipeResults");
+ 
+        results.replaceChildren();
+ 
+        if (ingredients.length === 0) {
+            status.textContent = "Bitte gib mindestens eine Zutat ein.";
+            return;
+        }
+ 
+        this.disabled = true;
+        status.textContent = "Gemini sucht passende Rezepte …";
+ 
+        try {
+            const response = await fetch(
+                "https://rid-cmls.onrender.com/api/recipes-from-ingredients",
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ ingredients })
+                }
+            );
+ 
+            const data = await response.json();
+ 
+            if (!response.ok) {
+                throw new Error(data.error || "Anfrage fehlgeschlagen.");
+            }
+ 
+            if (!Array.isArray(data.recipes) || data.recipes.length === 0) {
+                status.textContent = "Keine Rezepte gefunden.";
+                return;
+            }
+ 
+            status.textContent = "KI-Rezeptvorschläge – Angaben bitte prüfen.";
+ 
+            data.recipes.forEach(recipe => {
+                const column = document.createElement("div");
+                column.className = "col-md-6 col-lg-4";
+ 
+                const card = document.createElement("div");
+                card.className = "card h-100";
+ 
+                const body = document.createElement("div");
+                body.className = "card-body";
+ 
+                const title = document.createElement("h3");
+                title.className = "card-title fs-5";
+                title.textContent = recipe.title;
+ 
+                const info = document.createElement("p");
+                info.textContent = `${recipe.time} | ${recipe.servings}`;
+ 
+                const ingredientsHeading = document.createElement("h4");
+                ingredientsHeading.className = "fs-6 mt-3";
+                ingredientsHeading.textContent = "Zutaten";
+ 
+                const ingredientsList = document.createElement("ul");
+                (recipe.ingredients || []).forEach(text => {
+                    const li = document.createElement("li");
+                    li.textContent = text;
+                    ingredientsList.appendChild(li);
                 });
+ 
+                const stepsHeading = document.createElement("h4");
+                stepsHeading.className = "fs-6 mt-3";
+                stepsHeading.textContent = "Zubereitung";
+ 
+                const stepsList = document.createElement("ol");
+                (recipe.steps || []).forEach(text => {
+                    const li = document.createElement("li");
+                    li.textContent = text;
+                    stepsList.appendChild(li);
+                });
+ 
+                body.append(
+                    title,
+                    info,
+                    ingredientsHeading,
+                    ingredientsList,
+                    stepsHeading,
+                    stepsList
+                );
+ 
+                card.appendChild(body);
+                column.appendChild(card);
+                results.appendChild(column);
             });
-        });
-
-        // Favoriten Funktion
-        document.querySelectorAll('.btn-favorite').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                this.classList.toggle('active');
-            });
-        });
+        } catch (error) {
+            console.error(error);
+            status.textContent =
+                "Rezepte konnten nicht geladen werden. Bitte später erneut versuchen.";
+        } finally {
+            this.disabled = false;
+        }
+    });
     </script>
 </body>
 
