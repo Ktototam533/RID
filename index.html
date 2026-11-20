@@ -887,19 +887,7 @@ newRecipeForm.addEventListener("submit", function (event) {
  
     renderUserRecipes();
  
-    // Suche zurücksetzen, damit das neue Rezept sichtbar ist
-
-    searchInput.value = "";
-
-    activeCategory = "all";
- 
-    document.querySelectorAll(".filter-btn").forEach(button => {
-
-        button.classList.toggle("active", button.dataset.filter === "all");
-
-    });
- 
-    filterRecipes();
+    
 
 });
  
