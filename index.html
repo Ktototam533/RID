@@ -288,6 +288,61 @@
                 <button class="filter-btn" data-filter="gesund">Gesund</button>
             </div>
 
+            <div class="card p-4 mb-4">
+<h2 class="h4">Eigenes Rezept hinzufügen</h2>
+ 
+    <form id="newRecipeForm">
+<div class="mb-3">
+<label for="newRecipeTitle" class="form-label">Name des Gerichts</label>
+<input id="newRecipeTitle" name="title" class="form-control" required maxlength="80">
+</div>
+ 
+        <div class="mb-3">
+<label for="newRecipeDescription" class="form-label">Beschreibung</label>
+<input id="newRecipeDescription" name="description" class="form-control" required maxlength="200">
+</div>
+ 
+        <div class="row">
+<div class="col-md-6 mb-3">
+<label for="newRecipeTime" class="form-label">Zubereitungszeit</label>
+<input id="newRecipeTime" name="time" class="form-control" placeholder="20 Min" required maxlength="30">
+</div>
+ 
+            <div class="col-md-6 mb-3">
+<label for="newRecipeServings" class="form-label">Portionen</label>
+<input id="newRecipeServings" name="servings" class="form-control" placeholder="2 Portionen" required maxlength="30">
+</div>
+</div>
+ 
+        <div class="mb-3">
+<label for="newRecipeCategory" class="form-label">Kategorie</label>
+<select id="newRecipeCategory" name="category" class="form-select" required>
+<option value="vegetarisch">Vegetarisch</option>
+<option value="schnell">Schnelle Gerichte</option>
+<option value="gesund">Gesund</option>
+</select>
+</div>
+ 
+        <div class="mb-3">
+<label for="newRecipeImage" class="form-label">Bild-URL (optional)</label>
+<input id="newRecipeImage" name="image" type="url" class="form-control" placeholder="https://...">
+</div>
+ 
+        <div class="mb-3">
+<label for="newRecipeIngredients" class="form-label">Zutaten — eine pro Zeile</label>
+<textarea id="newRecipeIngredients" name="ingredients" class="form-control" rows="4" required placeholder="2 Eier&#10;200 ml Milch"></textarea>
+</div>
+ 
+        <div class="mb-3">
+<label for="newRecipeSteps" class="form-label">Zubereitung — ein Schritt pro Zeile</label>
+<textarea id="newRecipeSteps" name="steps" class="form-control" rows="4" required placeholder="Zutaten vorbereiten&#10;Alles vermischen"></textarea>
+</div>
+ 
+        <button type="submit" class="btn btn-success">Rezept hinzufügen</button>
+<p id="newRecipeStatus" class="mt-3" aria-live="polite"></p>
+</form>
+</div>
+
             <!-- Rezept-Karten -->
             <div class="row g-4" id="recipeContainer">
                 <!-- Rezept 1 -->
@@ -445,6 +500,27 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="userRecipeModal" tabindex="-1" aria-labelledby="userRecipeModalTitle" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered">
+<div class="modal-content">
+<div class="modal-header">
+<h2 class="modal-title fs-5" id="userRecipeModalTitle"></h2>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+</div>
+<div class="modal-body">
+<p id="userRecipeModalInfo"></p>
+ 
+                <h3 class="fs-6 mt-4">Zutaten</h3>
+<ul id="userRecipeModalIngredients"></ul>
+ 
+                <h3 class="fs-6 mt-4">Zubereitung</h3>
+<ol id="userRecipeModalSteps"></ol>
+</div>
+</div>
+</div>
+</div>
+ 
 <!-- Footer -->
     <footer>
         <div class="container">
@@ -630,6 +706,247 @@ const recipes = [
         });
 
     });
+
+    // Eigene Rezepte im Browser speichern
+
+const userRecipesKey = "rezeptid-user-recipes";
+
+const recipeContainer = document.getElementById("recipeContainer");
+
+const newRecipeForm = document.getElementById("newRecipeForm");
+ 
+function getUserRecipes() {
+
+    try {
+
+        return JSON.parse(localStorage.getItem(userRecipesKey) || "[]");
+
+    } catch {
+
+        return [];
+
+    }
+
+}
+ 
+function addListItems(list, items) {
+
+    list.replaceChildren();
+ 
+    items.forEach(text => {
+
+        const li = document.createElement("li");
+
+        li.textContent = text;
+
+        list.appendChild(li);
+
+    });
+
+}
+ 
+function renderUserRecipes() {
+
+    document.querySelectorAll(".user-created-recipe").forEach(card => card.remove());
+ 
+    getUserRecipes().forEach(recipe => {
+
+        const column = document.createElement("div");
+
+        column.className = "col-md-6 col-lg-4 recipe-item user-created-recipe";
+
+        column.dataset.category = recipe.category;
+ 
+        const card = document.createElement("div");
+
+        card.className = "recipe-card";
+ 
+        if (recipe.image) {
+
+            const image = document.createElement("img");
+
+            image.src = recipe.image;
+
+            image.alt = recipe.title;
+
+            image.className = "recipe-image";
+
+            card.appendChild(image);
+
+        }
+ 
+        const body = document.createElement("div");
+
+        body.className = "recipe-body";
+ 
+        const title = document.createElement("h3");
+
+        title.className = "recipe-title";
+
+        title.textContent = recipe.title;
+ 
+        const info = document.createElement("div");
+
+        info.className = "recipe-info";
+
+        info.textContent = `${recipe.time} | ${recipe.servings}`;
+ 
+        const description = document.createElement("p");
+
+        description.className = "recipe-description";
+
+        description.textContent = recipe.description;
+ 
+        const buttons = document.createElement("div");
+
+        buttons.className = "recipe-buttons";
+ 
+        const viewButton = document.createElement("button");
+
+        viewButton.type = "button";
+
+        viewButton.className = "btn-view";
+
+        viewButton.textContent = "Ansehen";
+
+        viewButton.dataset.recipeId = recipe.id;
+ 
+        buttons.appendChild(viewButton);
+
+        body.append(title, info, description, buttons);
+
+        card.appendChild(body);
+
+        column.appendChild(card);
+
+        recipeContainer.prepend(column);
+
+    });
+
+}
+ 
+// Neues Rezept speichern
+
+newRecipeForm.addEventListener("submit", function (event) {
+
+    event.preventDefault();
+ 
+    const formData = new FormData(newRecipeForm);
+ 
+    const splitLines = value =>
+
+        value.split(/\r?\n/).map(item => item.trim()).filter(Boolean);
+ 
+    const recipe = {
+
+        id: `user-${Date.now()}`,
+
+        title: formData.get("title").trim(),
+
+        description: formData.get("description").trim(),
+
+        time: formData.get("time").trim(),
+
+        servings: formData.get("servings").trim(),
+
+        category: formData.get("category"),
+
+        image: formData.get("image").trim(),
+
+        ingredients: splitLines(formData.get("ingredients")),
+
+        steps: splitLines(formData.get("steps"))
+
+    };
+ 
+    const recipes = getUserRecipes();
+
+    recipes.push(recipe);
+ 
+    try {
+
+        localStorage.setItem(userRecipesKey, JSON.stringify(recipes));
+
+    } catch (error) {
+
+        document.getElementById("newRecipeStatus").textContent =
+
+            "Rezept konnte nicht gespeichert werden.";
+
+        console.error(error);
+
+        return;
+
+    }
+ 
+    newRecipeForm.reset();
+
+    document.getElementById("newRecipeStatus").textContent =
+
+        "Rezept wurde hinzugefügt.";
+ 
+    renderUserRecipes();
+ 
+    // Suche zurücksetzen, damit das neue Rezept sichtbar ist
+
+    searchInput.value = "";
+
+    activeCategory = "all";
+ 
+    document.querySelectorAll(".filter-btn").forEach(button => {
+
+        button.classList.toggle("active", button.dataset.filter === "all");
+
+    });
+ 
+    filterRecipes();
+
+});
+ 
+// Details des eigenen Rezepts anzeigen
+
+recipeContainer.addEventListener("click", function (event) {
+
+    const button = event.target.closest(".btn-view[data-recipe-id]");
+
+    if (!button) return;
+ 
+    const recipe = getUserRecipes().find(item => item.id === button.dataset.recipeId);
+
+    if (!recipe) return;
+ 
+    document.getElementById("userRecipeModalTitle").textContent = recipe.title;
+
+    document.getElementById("userRecipeModalInfo").textContent =
+
+        `${recipe.time} | ${recipe.servings}`;
+ 
+    addListItems(
+
+        document.getElementById("userRecipeModalIngredients"),
+
+        recipe.ingredients
+
+    );
+ 
+    addListItems(
+
+        document.getElementById("userRecipeModalSteps"),
+
+        recipe.steps
+
+    );
+ 
+    bootstrap.Modal
+
+        .getOrCreateInstance(document.getElementById("userRecipeModal"))
+
+        .show();
+
+});
+ 
+renderUserRecipes();
+ 
 </script>
  
     </body>
